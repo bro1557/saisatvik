@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2b2bff">
+  <title>Satvik Yarlagadda</title>
+  <meta name="description" content="Personal site of Satvik Yarlagadda.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="top">
+    <div class="btn">
+      <a href="index.html">Satvik Yarlagadda</a>
+    </div>
+    <nav>
+      <a href="about.html">About</a>
+      <a href="#garage">Garage</a>
+      <a href="#contact">Contact</a>
+      <a href="#games">Games</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h1>"The only constant in the technology industry is change."
+        - Some Smart Person.
+      </h1>
+    </section>
+
+    <section id="price-check" class="tool">
+      <div class="btn"><a>Lookup Gadget!</a></div>
+      <p class="tool-lead">Most US enthusiast cars are on here, so no niche euros. I'm only human.</p>
+
+      <div class="finder">
+        <label class="sr-only" for="car-input">Search for a car</label>
+        <input id="car-input" type="text" role="combobox" aria-expanded="false" aria-controls="car-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Try Mustang, Raptor, 911...">
+        <ul id="car-list" class="suggest" role="listbox" hidden></ul>
+      </div>
+
+      <div class="chips">
+        <span>Try:</span>
+        <button type="button" data-car="Tesla Model Y">Model Y</button>
+        <button type="button" data-car="Ford F-150 Raptor">Raptor</button>
+        <button type="button" data-car="Koenigsegg Regera">Regera</button>
+        <button type="button" data-car="Ford Mustang GT">Mustang GT</button>
+        <button type="button" data-car="Honda Civic Type R">Civic Type R</button>
+        <button type="button" id="random">Surprise me</button>
+      </div>
+
+      <div id="car-result" class="result" aria-live="polite"></div>
+      <p class="fine">Rough US prices, not live listings. “Used” means a typical one a few years old, updated November 2026.</p>
+    </section>
+
+    <section id="garage" class="garage">
+      <h2>Garage</h2>
+      <p class="lead">One I have, two I want.</p>
+
+      <h3>Right now</h3>
+      <figure class="bay hero">
+        <a class="pic" href="https://www.google.com/search?q=Tesla+Model+Y" target="_blank" rel="noopener">
+          <img src="images/model-y.jpg" alt="Dark gray Tesla Model Y parked on a quiet street, seen from the rear." loading="lazy">
+          <span class="stall">Bay 01</span>
+          <span class="look">Search it on Google</span>
+        </a>
+        <figcaption>
+          <strong>Tesla Model Y</strong>
+          <span>Nothing beats what I have right now.</span>
+        </figcaption>
+      </figure>
+
+      <h3>Dream garage</h3>
+      <div class="dream">
+        <figure class="bay">
+          <a class="pic" href="https://www.google.com/search?q=Ford+F-150+Raptor" target="_blank" rel="noopener">
+            <img src="images/fr.avif" alt="Black Ford F-150 Raptor parked in a field at dusk." loading="lazy">
+            <span class="stall">Bay 02</span>
+            <span class="look">Search it on Google</span>
+          </a>
+          <figcaption>
+            <strong>Ford F-150 Raptor</strong>
+            <span>Blacked out Raptor. It’s huge, it’s loud, and it looks like it wants to jump a dune. Lowkey the best truck ever made.</span>
+          </figcaption>
+        </figure>
+
+        <figure class="bay">
+          <a class="pic" href="https://www.google.com/search?q=Koenigsegg+Regera" target="_blank" rel="noopener">
+            <img src="images/kr.avif" alt="Red carbon fiber Koenigsegg Regera on a display stand." loading="lazy">
+            <span class="stall">Bay 03</span>
+            <span class="look">Search it on Google</span>
+          </a>
+          <figcaption>
+            <strong>Koenigsegg Regera</strong>
+            <span>1,500 horsepower and no normal gearbox, which is kind of insane. Only 80 were ever built, so ngl, this one is a dream.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="contact" class="row">
+      <h2>Contact</h2>
+      <div class="body">
+        <p>The best way to reach me is <a href="mailto:y.saisatvik@gmail.com">y.saisatvik@gmail.com</a>.</p>
+        <p>I’m also on <a href="https://github.com/bro1557">GitHub</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <section id="games" class="games">
+    <div class="games-inner">
+      <h2>Games</h2>
+      <p class="lead">Games I made with claude, hosted on netlify. Indluded are references you probably won't get.</p>
+
+      <div class="game-links">
+        <div class="game">
+          <div class="btn">
+            <a href="https://gavelandgrease.netlify.app" target="_blank" rel="noopener">Gavel and Grease</a>
+          </div>
+          <p>A car auction game where you buy and sell cars.</p>
+        </div>
+
+        <div class="game">
+          <div class="btn">
+            <a href="https://mahishmati.netlify.app" target="_blank" rel="noopener">Mahishmati Defense</a>
+          </div>
+          <p>A tower defense game, like Bloons.</p>
+        </div>
+
+        <div class="game">
+          <div class="btn">
+            <a href="https://hit21.netlify.app" target="_blank" rel="noopener">Hit 21</a>
+          </div>
+          <p>A blackjack game.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Satvik Yarlagadda</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
