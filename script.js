@@ -282,3 +282,27 @@
 
   show(CARS[0]);
 })();
+/* Lamp: click or press Enter/Space to turn the light on and off */
+(() => {
+  const lamp = document.querySelector(".lamp");
+  if (!lamp) return;
+
+  const bell = lamp.querySelector(".bell-container");
+  const intro = lamp.closest(".intro");
+
+  function setLight(on) {
+    bell.classList.toggle("off", !on);
+    lamp.setAttribute("aria-pressed", String(on));
+    if (intro) intro.classList.toggle("lit", on);
+  }
+
+  setLight(true);
+
+  lamp.addEventListener("click", () => setLight(bell.classList.contains("off")));
+  lamp.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      lamp.click();
+    }
+  });
+})();

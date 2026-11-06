@@ -1,11 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#2b2bff">
   <title>Satvik Yarlagadda</title>
-  <meta name="description" content="Personal site of Satvik Yarlagadda.">
+  <meta name="description" content="Games, cars, and websites by Satvik Yarlagadda.">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Satvik Yarlagadda">
+  <meta property="og:description" content="Games, cars, and websites by Satvik Yarlagadda.">
+  <meta property="og:url" content="https://saisatvik.com/">
+  <meta property="og:image" content="https://saisatvik.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Satvik Yarlagadda. Games, cars, and websites.">
+  <meta name="twitter:card" content="summary_large_image">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
@@ -26,10 +41,48 @@
   </header>
 
   <main>
-    <section class="intro">
-      <h1>"The only constant in the technology industry is change."
-        - Some Smart Person.
-      </h1>
+    <section class="intro lit">
+      <div class="quote">
+        <h1>“The only constant in the technology industry is change.”</h1>
+        <p class="by">Some Smart Person</p>
+      </div>
+
+      <div class="lamp" role="button" tabindex="0" aria-pressed="true" aria-label="Lamp. Press to turn the light on or off." title="Tap the light">
+        <div class="bell-container">
+          <div class="rope"></div>
+          <div class="bell-top"></div>
+
+          <div class="bell-base"></div>
+          <div class="bell-base"></div>
+          <div class="shadow-l1"></div>
+          <div class="shadow-l2"></div>
+          <div class="left-glow"></div>
+          <div class="left-glow2"></div>
+          <div class="r-glow"></div>
+          <div class="r-glow2"></div>
+          <div class="mid-ring"></div>
+          <div class="mid-ring small"></div>
+
+          <div class="glow"></div>
+          <div class="glow2"></div>
+
+          <div class="bell-buff-t"></div>
+          <div class="bell-buff"></div>
+
+          <div class="bell-btm"></div>
+          <div class="bell-btm2"></div>
+
+          <div class="bell-ring-container">
+            <div class="bell-ring"></div>
+            <div class="bell-rays"></div>
+          </div>
+
+          <div class="volumetric">
+            <div class="vl"></div>
+            <div class="vr"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="price-check" class="tool">
@@ -104,7 +157,7 @@
     <section id="contact" class="row">
       <h2>Contact</h2>
       <div class="body">
-        <p>The best way to reach me is <a href="mailto:y.saisatvik@gmail.com">y.saisatvik@gmail.com</a>.</p>
+        <p>The best way to reach me is by <a href="mailto:y.saisatvik@gmail.com">Email</a>.</p>
         <p>I’m also on <a href="https://github.com/bro1557">GitHub</a>.</p>
       </div>
     </section>
@@ -113,10 +166,13 @@
   <section id="games" class="games">
     <div class="games-inner">
       <h2>Games</h2>
-      <p class="lead">Games I made with claude, hosted on netlify. Indluded are references you probably won't get.</p>
+      <p class="lead">Games I made with claude, hosted on netlify. Included are references you probably won't get.</p>
 
-      <div class="game-links">
+            <div class="game-links">
         <div class="game">
+          <a class="shot" href="https://gavelandgrease.netlify.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+            <img src="images/gavel.jpg" alt="" loading="lazy">
+          </a>
           <div class="btn">
             <a href="https://gavelandgrease.netlify.app" target="_blank" rel="noopener">Gavel and Grease</a>
           </div>
@@ -124,6 +180,9 @@
         </div>
 
         <div class="game">
+          <a class="shot" href="https://mahishmati.netlify.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+            <img src="images/mahishmati.jpg" alt="" loading="lazy">
+          </a>
           <div class="btn">
             <a href="https://mahishmati.netlify.app" target="_blank" rel="noopener">Mahishmati Defense</a>
           </div>
@@ -131,13 +190,17 @@
         </div>
 
         <div class="game">
+          <a class="shot" href="https://hit21.netlify.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+            <img src="images/hit21.jpg" alt="" loading="lazy">
+          </a>
           <div class="btn">
             <a href="https://hit21.netlify.app" target="_blank" rel="noopener">Hit 21</a>
           </div>
           <p>A blackjack game.</p>
         </div>
       </div>
-    </div>
+            </div>
+
   </section>
 
   <footer>
