@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://saisatvik.com/sitemap.xml
