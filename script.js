@@ -306,3 +306,23 @@
     }
   });
 })();
+/* Now page: fade timeline entries in as they scroll into view */
+(() => {
+  const items = document.querySelectorAll(".log li");
+  if (!items.length || !("IntersectionObserver" in window)) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("seen");
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  items.forEach(li => {
+    li.classList.add("reveal");
+    io.observe(li);
+  });
+})();

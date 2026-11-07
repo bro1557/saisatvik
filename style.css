@@ -966,3 +966,94 @@ footer p { margin: 0; }
   .game .shot,
   .game .shot img { transition: none; }
 }
+/* Button under the quote */
+.quote .btn { margin-top: 2.25rem; }
+
+/* Now page timeline */
+.log {
+  list-style: none;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  position: relative;
+}
+.log::before {
+  content: "";
+  position: absolute;
+  left: calc(0.55rem - 1px);
+  top: 0.75rem;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #ffe9d4, rgba(255, 255, 255, 0.35) 25%, rgba(255, 255, 255, 0.12));
+}
+.log li {
+  position: relative;
+  padding: 0 0 2.75rem 2.75rem;
+}
+.log li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+}
+.log li.now::before {
+  background: #fff7e8;
+  border-color: #ffe9d4;
+  box-shadow: 0 0 0 4px rgba(255, 233, 212, 0.18),
+    0 0 14px 4px rgba(255, 200, 140, 0.7),
+    0 0 36px 10px rgba(255, 190, 120, 0.35);
+  animation: breathe 3s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% {
+    box-shadow: 0 0 0 4px rgba(255, 233, 212, 0.18),
+      0 0 14px 4px rgba(255, 200, 140, 0.7),
+      0 0 36px 10px rgba(255, 190, 120, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 233, 212, 0.12),
+      0 0 20px 6px rgba(255, 200, 140, 0.9),
+      0 0 48px 14px rgba(255, 190, 120, 0.45);
+  }
+}
+
+.log .when {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  font: 500 0.75rem/1.4 ui-monospace, "SF Mono", Menlo, monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.log li.now .when { color: #ffe9d4; }
+.log h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+}
+.log p {
+  margin: 0;
+  max-width: 34rem;
+  color: var(--muted);
+}
+.log li.now p { color: #fff; }
+
+/* Entries fade in as you scroll (added by script.js) */
+.log li.reveal {
+  opacity: 0;
+  translate: 0 14px;
+  transition: opacity 0.6s ease, translate 0.6s ease;
+}
+.log li.reveal.seen {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .log li.now::before { animation: none; }
+  .log li.reveal { transition: none; }
+}
