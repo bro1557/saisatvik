@@ -1057,3 +1057,4 @@ footer p { margin: 0; }
   .log li.now::before { animation: none; }
   .log li.reveal { transition: none; }
 }
+.top nav { flex-wrap: wrap; gap: 0.5rem 1.25rem; }
