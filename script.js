@@ -282,30 +282,137 @@
 
   show(CARS[0]);
 })();
-/* Lamp: click or press Enter/Space to turn the light on and off */
+/* Lights and Night Drive.
+   Lamp on: the normal site. Lamp off: the page goes dark and a car drives
+   down the left edge as you scroll, its headlights lighting what is ahead. */
 (() => {
+  const root = document.documentElement;
   const lamp = document.querySelector(".lamp");
-  if (!lamp) return;
+  const bell = lamp ? lamp.querySelector(".bell-container") : null;
+  const intro = lamp ? lamp.closest(".intro") : null;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  const bell = lamp.querySelector(".bell-container");
-  const intro = lamp.closest(".intro");
+  /* Change this if you save the car under another name */
+  const CAR_IMAGE = "images/car-top.webp";
 
-  function setLight(on) {
-    bell.classList.toggle("off", !on);
-    lamp.setAttribute("aria-pressed", String(on));
-    if (intro) intro.classList.toggle("lit", on);
+  /* Shown only if the image is missing */
+  const CAR_FALLBACK = `<svg viewBox="0 0 40 84" aria-hidden="true" focusable="false">
+    <g fill="#050520">
+      <rect x="2.5" y="11" width="4" height="14" rx="2"/>
+      <rect x="33.5" y="11" width="4" height="14" rx="2"/>
+      <rect x="2.5" y="57" width="4" height="14" rx="2"/>
+      <rect x="33.5" y="57" width="4" height="14" rx="2"/>
+    </g>
+    <path d="M8 9 C8 3 13 1 20 1 C27 1 32 3 32 9 L33 44 C34 62 31 77 20 82 C9 77 6 62 7 44 Z" fill="#0c0c48" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
+    <path d="M12 12 L28 12 L29 21 L11 21 Z" fill="#17176a"/>
+    <path d="M11 24 L29 24 L30 50 L10 50 Z" fill="#1d1d7a"/>
+    <path d="M10.5 53 L29.5 53 L27.5 66 L12.5 66 Z" fill="#17176a"/>
+    <ellipse cx="4.5" cy="55" rx="2.2" ry="3" fill="#0c0c48" stroke="rgba(255,255,255,.3)" stroke-width=".6"/>
+    <ellipse cx="35.5" cy="55" rx="2.2" ry="3" fill="#0c0c48" stroke="rgba(255,255,255,.3)" stroke-width=".6"/>
+    <rect class="rear" x="8" y="2" width="24" height="2.4" rx="1.2" fill="#ff3347"/>
+    <g class="lamps" fill="#fff6d8">
+      <rect x="11" y="76" width="7" height="2" rx="1" transform="rotate(14 14.5 77)"/>
+      <rect x="22" y="76" width="7" height="2" rx="1" transform="rotate(-14 25.5 77)"/>
+    </g>
+  </svg>`;
+
+  /* Build the night scene once */
+  const rig = document.createElement("div");
+  rig.className = "night-rig";
+  rig.setAttribute("aria-hidden", "true");
+  rig.innerHTML = '<div class="night-dark"></div><div class="night-glow"></div><div class="night-car"></div>';
+  document.body.append(rig);
+
+  const carBox = rig.querySelector(".night-car");
+
+  function glow(cls) {
+    const s = document.createElement("span");
+    s.className = cls;
+    return s;
   }
 
-  setLight(true);
-
-  lamp.addEventListener("click", () => setLight(bell.classList.contains("off")));
-  lamp.addEventListener("keydown", e => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      lamp.click();
-    }
+  /* Load the real car. Once it loads, measure it so the beam starts at the nose. */
+  const img = new Image();
+  img.alt = "";
+  img.decoding = "async";
+  img.addEventListener("load", () => {
+    rig.style.setProperty("--car-ratio", String(img.naturalHeight / img.naturalWidth));
+    carBox.append(img, glow("tail"), glow("lamp-l"), glow("lamp-r"));
   });
+  img.addEventListener("error", () => {
+    carBox.innerHTML = CAR_FALLBACK;
+    rig.style.setProperty("--car-ratio", "2.1");
+  });
+  img.src = CAR_IMAGE;
+
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "night-toggle";
+  toggle.textContent = "Lights on";
+  toggle.hidden = true;
+  document.body.append(toggle);
+
+  /* Scroll position decides how far down the page the car has driven */
+  let queued = false;
+
+  function place() {
+    queued = false;
+    if (!root.classList.contains("night")) return;
+    const vh = window.innerHeight;
+    const header = document.querySelector(".top");
+    const start = (header ? header.offsetHeight : 90) + 48;
+    const end = Math.max(start, vh * 0.7);
+    const room = root.scrollHeight - vh;
+    const progress = room > 0 && !reduceMotion.matches
+      ? Math.min(1, Math.max(0, window.scrollY / room))
+      : 0;
+    const y = start + (end - start) * progress;
+    rig.style.height = vh * 3 + "px";
+    rig.style.transform = "translate3d(0," + (y - vh * 1.5) + "px,0)";
+  }
+
+  function queue() {
+    if (!queued) {
+      queued = true;
+      requestAnimationFrame(place);
+    }
+  }
+
+  function setLight(on) {
+    root.classList.toggle("night", !on);
+    toggle.hidden = on;
+    if (bell) {
+      bell.classList.toggle("off", !on);
+      lamp.setAttribute("aria-pressed", String(on));
+      if (intro) intro.classList.toggle("lit", on);
+    }
+    try { sessionStorage.setItem("lights", on ? "on" : "off"); } catch (e) {}
+    if (!on) place();
+  }
+
+  window.addEventListener("scroll", queue, { passive: true });
+  window.addEventListener("resize", queue);
+
+  toggle.addEventListener("click", () => setLight(true));
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && root.classList.contains("night")) setLight(true);
+  });
+
+  if (lamp) {
+    lamp.addEventListener("click", () => setLight(root.classList.contains("night")));
+    lamp.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        lamp.click();
+      }
+    });
+  }
+
+  let startOn = true;
+  try { startOn = sessionStorage.getItem("lights") !== "off"; } catch (e) {}
+  setLight(startOn);
 })();
+
 /* Now page: fade timeline entries in as they scroll into view */
 (() => {
   const items = document.querySelectorAll(".log li");
