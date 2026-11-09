@@ -1,0 +1,474 @@
+[
+  {
+    "name": "Tesla Model Y",
+    "keywords": "tesla my juniper",
+    "price": 41000,
+    "lo": 26000,
+    "hi": 36000,
+    "note": "New price is the base trim. Tesla changes prices a lot."
+  },
+  {
+    "name": "Tesla Model 3",
+    "keywords": "tesla m3",
+    "price": 37000,
+    "lo": 20000,
+    "hi": 30000,
+    "note": ""
+  },
+  {
+    "name": "Tesla Model S",
+    "keywords": "tesla ms plaid",
+    "price": 95000,
+    "lo": 38000,
+    "hi": 62000,
+    "note": "Plaid versions cost more."
+  },
+  {
+    "name": "Tesla Model X",
+    "keywords": "tesla mx plaid",
+    "price": 100000,
+    "lo": 45000,
+    "hi": 70000,
+    "note": ""
+  },
+  {
+    "name": "Tesla Cybertruck",
+    "keywords": "tesla truck ct",
+    "price": 80000,
+    "lo": 55000,
+    "hi": 70000,
+    "note": "Prices have moved a lot since launch."
+  },
+  {
+    "name": "Ford F-150 Raptor",
+    "keywords": "ford truck raptor f150 pickup",
+    "price": 83000,
+    "lo": 41000,
+    "hi": 75000,
+    "note": "Used range runs from 2018 trucks up to 2024. The Raptor R costs a lot more."
+  },
+  {
+    "name": "Ford F-150",
+    "keywords": "ford truck f150 pickup",
+    "price": 40000,
+    "lo": 28000,
+    "hi": 45000,
+    "note": ""
+  },
+  {
+    "name": "Ford Mustang GT",
+    "keywords": "ford mustang gt stang",
+    "price": 46000,
+    "lo": 33000,
+    "hi": 45000,
+    "note": ""
+  },
+  {
+    "name": "Ford Mustang Mach-E",
+    "keywords": "ford mustang mach e mache ev",
+    "price": 38000,
+    "lo": 20000,
+    "hi": 30000,
+    "note": ""
+  },
+  {
+    "name": "Ford Bronco",
+    "keywords": "ford bronco",
+    "price": 40000,
+    "lo": 30000,
+    "hi": 45000,
+    "note": ""
+  },
+  {
+    "name": "Ford GT",
+    "keywords": "ford gt supercar",
+    "price": 450000,
+    "lo": 1000000,
+    "hi": 1500000,
+    "note": "Limited run, so it sells for way more than it cost."
+  },
+  {
+    "name": "Chevrolet Corvette Stingray",
+    "keywords": "chevy corvette c8 vette",
+    "price": 70000,
+    "lo": 55000,
+    "hi": 68000,
+    "note": ""
+  },
+  {
+    "name": "Chevrolet Corvette Z06",
+    "keywords": "chevy corvette c8 z06 vette",
+    "price": 115000,
+    "lo": 100000,
+    "hi": 125000,
+    "note": ""
+  },
+  {
+    "name": "Toyota Camry",
+    "keywords": "toyota camry",
+    "price": 29000,
+    "lo": 21000,
+    "hi": 28000,
+    "note": ""
+  },
+  {
+    "name": "Toyota Corolla",
+    "keywords": "toyota corolla",
+    "price": 23000,
+    "lo": 16000,
+    "hi": 22000,
+    "note": ""
+  },
+  {
+    "name": "Toyota RAV4",
+    "keywords": "toyota rav4",
+    "price": 33000,
+    "lo": 24000,
+    "hi": 33000,
+    "note": ""
+  },
+  {
+    "name": "Toyota Supra",
+    "keywords": "toyota gr supra a90",
+    "price": 58000,
+    "lo": 42000,
+    "hi": 58000,
+    "note": ""
+  },
+  {
+    "name": "Toyota GR86",
+    "keywords": "toyota gr86 86 brz",
+    "price": 31000,
+    "lo": 25000,
+    "hi": 31000,
+    "note": ""
+  },
+  {
+    "name": "Toyota GR Corolla",
+    "keywords": "toyota grcorolla gr corolla",
+    "price": 39000,
+    "lo": 32000,
+    "hi": 42000,
+    "note": "Used ones sometimes sell above sticker."
+  },
+  {
+    "name": "Toyota Land Cruiser",
+    "keywords": "toyota land cruiser lc",
+    "price": 59000,
+    "lo": 52000,
+    "hi": 62000,
+    "note": ""
+  },
+  {
+    "name": "Toyota 4Runner",
+    "keywords": "toyota 4runner four runner",
+    "price": 44000,
+    "lo": 33000,
+    "hi": 45000,
+    "note": ""
+  },
+  {
+    "name": "Honda Civic",
+    "keywords": "honda civic",
+    "price": 25000,
+    "lo": 18000,
+    "hi": 24000,
+    "note": ""
+  },
+  {
+    "name": "Honda Civic Type R",
+    "keywords": "honda civic type r ctr",
+    "price": 47000,
+    "lo": 38000,
+    "hi": 50000,
+    "note": ""
+  },
+  {
+    "name": "Honda Accord",
+    "keywords": "honda accord",
+    "price": 29000,
+    "lo": 21000,
+    "hi": 28000,
+    "note": ""
+  },
+  {
+    "name": "Honda CR-V",
+    "keywords": "honda crv cr v",
+    "price": 31000,
+    "lo": 22000,
+    "hi": 30000,
+    "note": ""
+  },
+  {
+    "name": "Acura NSX",
+    "keywords": "acura honda nsx",
+    "price": 170000,
+    "lo": 130000,
+    "hi": 200000,
+    "note": ""
+  },
+  {
+    "name": "Nissan GT-R",
+    "keywords": "nissan gtr godzilla r35",
+    "price": 120000,
+    "lo": 85000,
+    "hi": 130000,
+    "note": "The last ones sold new around this price."
+  },
+  {
+    "name": "Nissan Z",
+    "keywords": "nissan z 400z",
+    "price": 45000,
+    "lo": 35000,
+    "hi": 45000,
+    "note": ""
+  },
+  {
+    "name": "Mazda MX-5 Miata",
+    "keywords": "mazda miata mx5",
+    "price": 31000,
+    "lo": 22000,
+    "hi": 30000,
+    "note": ""
+  },
+  {
+    "name": "Subaru WRX",
+    "keywords": "subaru wrx",
+    "price": 33000,
+    "lo": 24000,
+    "hi": 31000,
+    "note": ""
+  },
+  {
+    "name": "Volkswagen Golf R",
+    "keywords": "vw volkswagen golf r",
+    "price": 47000,
+    "lo": 33000,
+    "hi": 42000,
+    "note": ""
+  },
+  {
+    "name": "BMW M3",
+    "keywords": "bmw m3",
+    "price": 80000,
+    "lo": 60000,
+    "hi": 80000,
+    "note": ""
+  },
+  {
+    "name": "BMW M4",
+    "keywords": "bmw m4",
+    "price": 85000,
+    "lo": 58000,
+    "hi": 78000,
+    "note": ""
+  },
+  {
+    "name": "BMW 3 Series",
+    "keywords": "bmw 330i 3 series",
+    "price": 50000,
+    "lo": 28000,
+    "hi": 42000,
+    "note": ""
+  },
+  {
+    "name": "Mercedes-Benz G-Class",
+    "keywords": "mercedes benz g wagon gwagon g550 g63 g class",
+    "price": 150000,
+    "lo": 120000,
+    "hi": 170000,
+    "note": "G-Wagons hold their value really well."
+  },
+  {
+    "name": "Audi R8",
+    "keywords": "audi r8 v10",
+    "price": 160000,
+    "lo": 130000,
+    "hi": 190000,
+    "note": "The final years sold new near this price."
+  },
+  {
+    "name": "Audi RS6 Avant",
+    "keywords": "audi rs6 avant wagon",
+    "price": 125000,
+    "lo": 100000,
+    "hi": 130000,
+    "note": ""
+  },
+  {
+    "name": "Porsche 911 Carrera",
+    "keywords": "porsche 911 carrera",
+    "price": 125000,
+    "lo": 85000,
+    "hi": 130000,
+    "note": ""
+  },
+  {
+    "name": "Porsche 911 GT3",
+    "keywords": "porsche 911 gt3",
+    "price": 225000,
+    "lo": 210000,
+    "hi": 300000,
+    "note": "Used ones often sell above sticker."
+  },
+  {
+    "name": "Porsche Taycan",
+    "keywords": "porsche taycan ev",
+    "price": 100000,
+    "lo": 50000,
+    "hi": 80000,
+    "note": ""
+  },
+  {
+    "name": "Porsche Cayenne",
+    "keywords": "porsche cayenne suv",
+    "price": 95000,
+    "lo": 45000,
+    "hi": 70000,
+    "note": ""
+  },
+  {
+    "name": "Lamborghini Huracan",
+    "keywords": "lambo lamborghini huracan",
+    "price": 250000,
+    "lo": 200000,
+    "hi": 280000,
+    "note": ""
+  },
+  {
+    "name": "Lamborghini Urus",
+    "keywords": "lambo lamborghini urus suv",
+    "price": 240000,
+    "lo": 170000,
+    "hi": 220000,
+    "note": ""
+  },
+  {
+    "name": "Lamborghini Aventador",
+    "keywords": "lambo lamborghini aventador",
+    "price": 400000,
+    "lo": 330000,
+    "hi": 550000,
+    "note": "The SVJ and Ultimae cost a lot more."
+  },
+  {
+    "name": "Ferrari 488 GTB",
+    "keywords": "ferrari 488 gtb",
+    "price": 250000,
+    "lo": 230000,
+    "hi": 300000,
+    "note": ""
+  },
+  {
+    "name": "Ferrari F8 Tributo",
+    "keywords": "ferrari f8 tributo",
+    "price": 280000,
+    "lo": 300000,
+    "hi": 380000,
+    "note": ""
+  },
+  {
+    "name": "Ferrari Roma",
+    "keywords": "ferrari roma",
+    "price": 250000,
+    "lo": 215000,
+    "hi": 260000,
+    "note": ""
+  },
+  {
+    "name": "McLaren 720S",
+    "keywords": "mclaren 720s",
+    "price": 300000,
+    "lo": 190000,
+    "hi": 260000,
+    "note": ""
+  },
+  {
+    "name": "Bentley Continental GT",
+    "keywords": "bentley continental gt",
+    "price": 260000,
+    "lo": 150000,
+    "hi": 220000,
+    "note": ""
+  },
+  {
+    "name": "Rolls-Royce Cullinan",
+    "keywords": "rolls royce rr cullinan suv",
+    "price": 400000,
+    "lo": 250000,
+    "hi": 340000,
+    "note": ""
+  },
+  {
+    "name": "Bugatti Veyron",
+    "keywords": "bugatti veyron",
+    "price": 1700000,
+    "lo": 1600000,
+    "hi": 2500000,
+    "note": ""
+  },
+  {
+    "name": "Bugatti Chiron",
+    "keywords": "bugatti chiron",
+    "price": 3000000,
+    "lo": 3000000,
+    "hi": 4000000,
+    "note": ""
+  },
+  {
+    "name": "Koenigsegg Regera",
+    "keywords": "koenigsegg regera",
+    "price": 1900000,
+    "lo": 2500000,
+    "hi": 3800000,
+    "note": "Only 80 were built, and they sell for way more than they cost."
+  },
+  {
+    "name": "Lucid Air",
+    "keywords": "lucid air ev",
+    "price": 70000,
+    "lo": 40000,
+    "hi": 60000,
+    "note": ""
+  },
+  {
+    "name": "Rivian R1T",
+    "keywords": "rivian r1t truck ev",
+    "price": 70000,
+    "lo": 40000,
+    "hi": 58000,
+    "note": ""
+  },
+  {
+    "name": "Hyundai Ioniq 5",
+    "keywords": "hyundai ioniq 5 ev",
+    "price": 35000,
+    "lo": 20000,
+    "hi": 30000,
+    "note": ""
+  },
+  {
+    "name": "Jeep Wrangler",
+    "keywords": "jeep wrangler",
+    "price": 33000,
+    "lo": 27000,
+    "hi": 40000,
+    "note": ""
+  },
+  {
+    "name": "Land Rover Defender",
+    "keywords": "land rover range defender",
+    "price": 63000,
+    "lo": 45000,
+    "hi": 65000,
+    "note": ""
+  },
+  {
+    "name": "Cadillac Escalade",
+    "keywords": "cadillac escalade suv",
+    "price": 93000,
+    "lo": 70000,
+    "hi": 95000,
+    "note": ""
+  }
+]

@@ -2,6 +2,60 @@
 (() => {
   "use strict";
 
+  const topBar = document.querySelector(".top");
+  const nav = document.getElementById("site-nav");
+  const navToggle = document.querySelector(".nav-toggle");
+
+  if (topBar && nav && navToggle) {
+    const closeNav = () => {
+      nav.classList.remove("is-open");
+      navToggle.setAttribute("aria-expanded", "false");
+      navToggle.classList.remove("is-open");
+      document.body.classList.remove("nav-open");
+    };
+
+    const openNav = () => {
+      nav.classList.add("is-open");
+      navToggle.setAttribute("aria-expanded", "true");
+      navToggle.classList.add("is-open");
+      document.body.classList.add("nav-open");
+    };
+
+    navToggle.addEventListener("click", () => {
+      const isOpen = nav.classList.contains("is-open");
+      if (isOpen) closeNav();
+      else openNav();
+    });
+
+    nav.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        if (window.innerWidth <= 760) closeNav();
+      });
+    });
+
+    document.addEventListener("click", (event) => {
+      if (window.innerWidth > 760) return;
+      if (!topBar.contains(event.target)) closeNav();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && nav.classList.contains("is-open")) {
+        closeNav();
+      }
+    });
+
+    const updateScrollState = () => {
+      topBar.classList.toggle("is-scrolled", window.scrollY > 18);
+    };
+
+    updateScrollState();
+    window.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 760) closeNav();
+      updateScrollState();
+    }, { passive: true });
+  }
+
   const input = document.getElementById("car-input");
   if (!input) return;
 
@@ -9,9 +63,9 @@
   const out = document.getElementById("car-result");
   const MODEL_Y = "Tesla Model Y";
   const MODEL_Y_NEW = 41000;
+  const DATA_URL = "cars-data.json";
 
-  // name, extra words people might type, new price, used low, used high, note
-  const RAW = [
+  const FALLBACK_RAW = [
     ["Tesla Model Y", "tesla my juniper", 41000, 26000, 36000, "New price is the base trim. Tesla changes prices a lot."],
     ["Tesla Model 3", "tesla m3", 37000, 20000, 30000, ""],
     ["Tesla Model S", "tesla ms plaid", 95000, 38000, 62000, "Plaid versions cost more."],
@@ -73,214 +127,282 @@
     ["Cadillac Escalade", "cadillac escalade suv", 93000, 70000, 95000, ""]
   ];
 
+  function normalizeCarData(raw) {
+    if (!Array.isArray(raw)) return [];
+
+    return raw.map((item) => {
+      if (Array.isArray(item)) {
+        return {
+          name: item[0],
+          keys: item[1],
+          price: item[2],
+          lo: item[3],
+          hi: item[4],
+          note: item[5] || ""
+        };
+      }
+
+      return {
+        name: item.name,
+        keys: item.keywords || item.keys || "",
+        price: Number(item.price),
+        lo: Number(item.lo ?? item.usedLow ?? item.low ?? 0),
+        hi: Number(item.hi ?? item.usedHigh ?? item.high ?? 0),
+        note: item.note || ""
+      };
+    });
+  }
+
+  async function loadCars() {
+    try {
+      const response = await fetch(DATA_URL, { cache: "force-cache" });
+      if (!response.ok) throw new Error("Failed to load cars data");
+      const data = await response.json();
+      const normalized = normalizeCarData(data);
+      if (normalized.length) return normalized;
+    } catch (error) {
+      // Ignore and fall back to bundled data when running offline or from file://.
+    }
+    return normalizeCarData(FALLBACK_RAW);
+  }
+
+  function buildCars(raw) {
+    return raw.map((item) => {
+      const name = item.name;
+      const keys = item.keys || "";
+      const nn = norm(name);
+      return {
+        name,
+        nn,
+        words: norm(name + " " + keys).split(" "),
+        price: Number(item.price),
+        lo: Number(item.lo),
+        hi: Number(item.hi),
+        note: item.note || ""
+      };
+    });
+  }
+
   function norm(s) {
     return s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   }
 
-  const CARS = RAW.map(([name, keys, price, lo, hi, note]) => {
-    const nn = norm(name);
-    return { name, nn, words: norm(name + " " + keys).split(" "), price, lo, hi, note };
-  });
+  async function initCarSearch() {
+    const rawCars = await loadCars();
+    const CARS = buildCars(rawCars);
+    const CAR_MAP = new Map(CARS.map((car) => [car.name, car]));
+    const SEARCH_CACHE = new Map();
 
-  function money(n) {
-    if (n >= 1000000) {
-      return "$" + (n / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+    function money(n) {
+      if (n >= 1000000) {
+        return "$" + (n / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+      }
+      return "$" + n.toLocaleString("en-US");
     }
-    return "$" + n.toLocaleString("en-US");
-  }
 
-  function el(tag, cls, text) {
-    const e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text !== undefined) e.textContent = text;
-    return e;
-  }
-
-  function googleLink(query, label) {
-    const a = el("a", "live", label);
-    a.href = "https://www.google.com/search?q=" + encodeURIComponent(query);
-    a.target = "_blank";
-    a.rel = "noopener";
-    return a;
-  }
-
-  /* Search: every word you type has to match the start of a word in the name */
-  function search(q) {
-    const nq = norm(q);
-    if (!nq) return [];
-    const toks = nq.split(" ");
-    const found = [];
-    for (const c of CARS) {
-      if (!toks.every(t => c.words.some(w => w.startsWith(t)))) continue;
-      const score = c.nn.startsWith(nq) ? 0 : c.nn.split(" ").some(w => w.startsWith(toks[0])) ? 1 : 2;
-      found.push({ c, score });
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
     }
-    found.sort((a, b) => a.score - b.score || a.c.name.localeCompare(b.c.name));
-    return found.slice(0, 6).map(f => f.c);
-  }
 
-  /* Suggestions list */
-  let matches = [];
-  let active = -1;
-
-  function mark(li, name, q) {
-    const typed = q.trim().toLowerCase();
-    const i = typed ? name.toLowerCase().indexOf(typed) : -1;
-    if (i < 0) {
-      li.textContent = name;
-      return;
+    function googleLink(query, label) {
+      const a = el("a", "live", label);
+      a.href = "https://www.google.com/search?q=" + encodeURIComponent(query);
+      a.target = "_blank";
+      a.rel = "noopener";
+      return a;
     }
-    li.append(
-      document.createTextNode(name.slice(0, i)),
-      el("b", "", name.slice(i, i + typed.length)),
-      document.createTextNode(name.slice(i + typed.length))
-    );
-  }
 
-  function renderList() {
-    list.replaceChildren();
-    matches.forEach((c, i) => {
-      const li = el("li");
-      li.id = "car-opt-" + i;
-      li.setAttribute("role", "option");
-      li.setAttribute("aria-selected", i === active ? "true" : "false");
-      mark(li, c.name, input.value);
-      li.addEventListener("mousedown", e => {
-        e.preventDefault();
-        pick(c);
+    function search(q) {
+      const nq = norm(q);
+      if (!nq) return [];
+      if (SEARCH_CACHE.has(nq)) return SEARCH_CACHE.get(nq);
+
+      const toks = nq.split(" ");
+      const found = [];
+      for (const c of CARS) {
+        if (!toks.every((t) => c.words.some((w) => w.startsWith(t)))) continue;
+        const score = c.nn.startsWith(nq) ? 0 : c.nn.split(" ").some((w) => w.startsWith(toks[0])) ? 1 : 2;
+        found.push({ c, score });
+      }
+      found.sort((a, b) => a.score - b.score || a.c.name.localeCompare(b.c.name));
+      const result = found.slice(0, 6).map((f) => f.c);
+      SEARCH_CACHE.set(nq, result);
+      return result;
+    }
+
+    let matches = [];
+    let active = -1;
+
+    function mark(li, name, q) {
+      const typed = q.trim().toLowerCase();
+      const i = typed ? name.toLowerCase().indexOf(typed) : -1;
+      if (i < 0) {
+        li.textContent = name;
+        return;
+      }
+      li.append(
+        document.createTextNode(name.slice(0, i)),
+        el("b", "", name.slice(i, i + typed.length)),
+        document.createTextNode(name.slice(i + typed.length))
+      );
+    }
+
+    function renderList() {
+      const frag = document.createDocumentFragment();
+      matches.forEach((c, i) => {
+        const li = el("li");
+        li.id = "car-opt-" + i;
+        li.setAttribute("role", "option");
+        li.setAttribute("aria-selected", i === active ? "true" : "false");
+        mark(li, c.name, input.value);
+        li.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          pick(c);
+        });
+        frag.append(li);
       });
-      list.append(li);
-    });
-    const has = matches.length > 0;
-    list.hidden = !has;
-    input.setAttribute("aria-expanded", String(has));
-    if (active >= 0) input.setAttribute("aria-activedescendant", "car-opt-" + active);
-    else input.removeAttribute("aria-activedescendant");
-  }
 
-  function closeList() {
-    matches = [];
-    active = -1;
-    renderList();
-  }
-
-  /* Results */
-  function priceBlock(label, num, sub) {
-    const d = el("div", "price");
-    d.append(el("div", "label", label), el("div", "num", num), el("div", "sub", sub));
-    return d;
-  }
-
-  function bar(label, value, top, cls) {
-    const row = el("div", "bar " + cls);
-    const track = el("span", "track");
-    const fill = el("span", "fill");
-    track.append(fill);
-    row.append(el("span", "", label), track);
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      fill.style.width = (value / top * 100) + "%";
-    }));
-    return row;
-  }
-
-  function show(car) {
-    const mid = (car.lo + car.hi) / 2;
-    const ratio = mid / car.price;
-    const top = Math.max(car.price, car.hi);
-
-    out.replaceChildren();
-    out.append(el("h3", "", car.name));
-
-    const prices = el("div", "prices");
-    prices.append(
-      priceBlock("New", money(car.price), "sticker price"),
-      priceBlock("Used now", money(car.lo) + " to " + money(car.hi), "a typical one")
-    );
-    out.append(prices);
-
-    const bars = el("div", "bars");
-    bars.setAttribute("role", "img");
-    bars.setAttribute("aria-label", "Bar chart comparing the new price with the used price");
-    bars.append(bar("New", car.price, top, "new"), bar("Used", mid, top, "used"));
-    out.append(bars);
-
-    let verdict;
-    if (ratio < 0.98) verdict = "A used one runs about " + Math.round(ratio * 100) + "% of the new price.";
-    else if (ratio <= 1.02) verdict = "A used one costs about the same as a new one.";
-    else verdict = "A used one sells for about " + ratio.toFixed(1) + "x the new price.";
-    out.append(el("p", "verdict", verdict));
-
-    if (car.name !== MODEL_Y) {
-      const r = car.price / MODEL_Y_NEW;
-      let vs;
-      if (r >= 1.1) vs = "New, that’s about " + (r >= 10 ? Math.round(r) : r.toFixed(1)) + "x the price of a Model Y.";
-      else if (r <= 0.9) vs = "New, that’s about " + Math.round(r * 100) + "% of the price of a Model Y.";
-      else vs = "About the same price as a new Model Y.";
-      out.append(el("p", "vs", vs));
+      list.replaceChildren(frag);
+      const has = matches.length > 0;
+      list.hidden = !has;
+      input.setAttribute("aria-expanded", String(has));
+      if (active >= 0) input.setAttribute("aria-activedescendant", "car-opt-" + active);
+      else input.removeAttribute("aria-activedescendant");
     }
 
-    if (car.note) out.append(el("p", "note", car.note));
-    out.append(googleLink(car.name + " price new and used", "Check live prices on Google"));
-  }
-
-  function notFound(q) {
-    out.replaceChildren();
-    out.append(
-      el("h3", "", "I don’t have “" + q + "” yet."),
-      el("p", "", "Try a different spelling, or check live prices for it."),
-      googleLink(q + " price new and used", "Search prices on Google")
-    );
-  }
-
-  function pick(car) {
-    input.value = car.name;
-    closeList();
-    show(car);
-  }
-
-  /* Events */
-  input.addEventListener("input", () => {
-    matches = search(input.value);
-    active = -1;
-    renderList();
-  });
-
-  input.addEventListener("keydown", e => {
-    if (e.key === "ArrowDown" && matches.length) {
-      e.preventDefault();
-      active = (active + 1) % matches.length;
+    function closeList() {
+      matches = [];
+      active = -1;
       renderList();
-    } else if (e.key === "ArrowUp" && matches.length) {
-      e.preventDefault();
-      active = active <= 0 ? matches.length - 1 : active - 1;
-      renderList();
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      const c = matches[active >= 0 ? active : 0];
-      if (c) pick(c);
-      else if (input.value.trim()) notFound(input.value.trim());
-    } else if (e.key === "Escape") {
+    }
+
+    function priceBlock(label, num, sub) {
+      const d = el("div", "price");
+      d.append(el("div", "label", label), el("div", "num", num), el("div", "sub", sub));
+      return d;
+    }
+
+    function bar(label, value, top, cls) {
+      const row = el("div", "bar " + cls);
+      const track = el("span", "track");
+      const fill = el("span", "fill");
+      track.append(fill);
+      row.append(el("span", "", label), track);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        fill.style.width = (value / top * 100) + "%";
+      }));
+      return row;
+    }
+
+    function show(car) {
+      const mid = (car.lo + car.hi) / 2;
+      const ratio = mid / car.price;
+      const top = Math.max(car.price, car.hi);
+
+      out.replaceChildren();
+      out.append(el("h3", "", car.name));
+
+      const prices = el("div", "prices");
+      prices.append(
+        priceBlock("New", money(car.price), "sticker price"),
+        priceBlock("Used now", money(car.lo) + " to " + money(car.hi), "a typical one")
+      );
+      out.append(prices);
+
+      const bars = el("div", "bars");
+      bars.setAttribute("role", "img");
+      bars.setAttribute("aria-label", "Bar chart comparing the new price with the used price");
+      bars.append(bar("New", car.price, top, "new"), bar("Used", mid, top, "used"));
+      out.append(bars);
+
+      let verdict;
+      if (ratio < 0.98) verdict = "A used one runs about " + Math.round(ratio * 100) + "% of the new price.";
+      else if (ratio <= 1.02) verdict = "A used one costs about the same as a new one.";
+      else verdict = "A used one sells for about " + ratio.toFixed(1) + "x the new price.";
+      out.append(el("p", "verdict", verdict));
+
+      if (car.name !== MODEL_Y) {
+        const r = car.price / MODEL_Y_NEW;
+        let vs;
+        if (r >= 1.1) vs = "New, that’s about " + (r >= 10 ? Math.round(r) : r.toFixed(1)) + "x the price of a Model Y.";
+        else if (r <= 0.9) vs = "New, that’s about " + Math.round(r * 100) + "% of the price of a Model Y.";
+        else vs = "About the same price as a new Model Y.";
+        out.append(el("p", "vs", vs));
+      }
+
+      if (car.note) out.append(el("p", "note", car.note));
+      out.append(googleLink(car.name + " price new and used", "Check live prices on Google"));
+    }
+
+    function notFound(q) {
+      out.replaceChildren();
+      out.append(
+        el("h3", "", "I don’t have “" + q + "” yet."),
+        el("p", "", "Try a different spelling, or check live prices for it."),
+        googleLink(q + " price new and used", "Search prices on Google")
+      );
+    }
+
+    function pick(car) {
+      input.value = car.name;
       closeList();
+      show(car);
     }
-  });
 
-  input.addEventListener("blur", closeList);
+    let searchTimer = 0;
 
-  document.querySelectorAll("[data-car]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const c = CARS.find(x => x.name === btn.dataset.car);
-      if (c) pick(c);
+    input.addEventListener("input", () => {
+      window.clearTimeout(searchTimer);
+      searchTimer = window.setTimeout(() => {
+        matches = search(input.value);
+        active = -1;
+        renderList();
+      }, 60);
     });
-  });
 
-  const rand = document.getElementById("random");
-  if (rand) {
-    rand.addEventListener("click", () => {
-      pick(CARS[Math.floor(Math.random() * CARS.length)]);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown" && matches.length) {
+        e.preventDefault();
+        active = (active + 1) % matches.length;
+        renderList();
+      } else if (e.key === "ArrowUp" && matches.length) {
+        e.preventDefault();
+        active = active <= 0 ? matches.length - 1 : active - 1;
+        renderList();
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        const c = matches[active >= 0 ? active : 0];
+        if (c) pick(c);
+        else if (input.value.trim()) notFound(input.value.trim());
+      } else if (e.key === "Escape") {
+        closeList();
+      }
     });
+
+    input.addEventListener("blur", closeList);
+
+    document.querySelectorAll("[data-car]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const c = CAR_MAP.get(btn.dataset.car);
+        if (c) pick(c);
+      });
+    });
+
+    const rand = document.getElementById("random");
+    if (rand) {
+      rand.addEventListener("click", () => {
+        const randomCar = CARS[Math.floor(Math.random() * CARS.length)];
+        pick(randomCar);
+      });
+    }
+
+    show(CARS[0]);
   }
 
-  show(CARS[0]);
+  initCarSearch();
 })();
 /* Lights and Night Drive.
    Lamp on: the normal site. Lamp off: the page goes dark and a car drives
@@ -288,9 +410,17 @@
 (() => {
   const root = document.documentElement;
   const lamp = document.querySelector(".lamp");
-  const bell = lamp ? lamp.querySelector(".bell-container") : null;
-  const intro = lamp ? lamp.closest(".intro") : null;
+  if (!lamp) return;
+
+  const header = document.querySelector(".top");
+  const bell = lamp.querySelector(".bell-container");
+  const intro = lamp.closest(".intro");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  if (reduceMotion.matches) {
+    root.classList.remove("night");
+    return;
+  }
 
   /* Change this if you save the car under another name */
   const CAR_IMAGE = "images/car-top.webp";
@@ -316,14 +446,12 @@
     </g>
   </svg>`;
 
-  /* Build the night scene once */
-  const rig = document.createElement("div");
-  rig.className = "night-rig";
-  rig.setAttribute("aria-hidden", "true");
-  rig.innerHTML = '<div class="night-dark"></div><div class="night-glow"></div><div class="night-car"></div>';
-  document.body.append(rig);
-
-  const carBox = rig.querySelector(".night-car");
+  let rig = null;
+  let carBox = null;
+  let toggle = null;
+  let img = null;
+  let queued = false;
+  let ready = false;
 
   function glow(cls) {
     const s = document.createElement("span");
@@ -331,76 +459,100 @@
     return s;
   }
 
-  /* Load the real car. Once it loads, measure it so the beam starts at the nose. */
-  const img = new Image();
-  img.alt = "";
-  img.decoding = "async";
-  img.addEventListener("load", () => {
-    rig.style.setProperty("--car-ratio", String(img.naturalHeight / img.naturalWidth));
-    carBox.append(img, glow("tail"), glow("lamp-l"), glow("lamp-r"));
-  });
-  img.addEventListener("error", () => {
-    carBox.innerHTML = CAR_FALLBACK;
-    rig.style.setProperty("--car-ratio", "2.1");
-  });
-  img.src = CAR_IMAGE;
+  function ensureScene() {
+    if (ready) return;
+    ready = true;
 
-  const toggle = document.createElement("button");
-  toggle.type = "button";
-  toggle.className = "night-toggle";
-  toggle.textContent = "Lights on";
-  toggle.hidden = true;
-  document.body.append(toggle);
+    rig = document.createElement("div");
+    rig.className = "night-rig";
+    rig.setAttribute("aria-hidden", "true");
+    rig.innerHTML = '<div class="night-dark"></div><div class="night-glow"></div><div class="night-car"></div>';
+    document.body.append(rig);
 
-  /* Scroll position decides how far down the page the car has driven */
-  let queued = false;
+    carBox = rig.querySelector(".night-car");
+
+    toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "night-toggle";
+    toggle.textContent = "Lights on";
+    toggle.hidden = true;
+    document.body.append(toggle);
+
+    toggle.addEventListener("click", () => setLight(true));
+
+    img = new Image();
+    img.alt = "";
+    img.decoding = "async";
+    img.addEventListener("load", () => {
+      if (!rig) return;
+      rig.style.setProperty("--car-ratio", String(img.naturalHeight / img.naturalWidth));
+      carBox.append(img, glow("tail"), glow("lamp-l"), glow("lamp-r"));
+    });
+    img.addEventListener("error", () => {
+      if (!rig || !carBox) return;
+      carBox.innerHTML = CAR_FALLBACK;
+      rig.style.setProperty("--car-ratio", "2.1");
+    });
+    img.src = CAR_IMAGE;
+  }
 
   function place() {
     queued = false;
-    if (!root.classList.contains("night")) return;
+    if (!rig || !root.classList.contains("night")) return;
+
     const vh = window.innerHeight;
-    const header = document.querySelector(".top");
     const start = (header ? header.offsetHeight : 90) + 48;
     const end = Math.max(start, vh * 0.7);
     const room = root.scrollHeight - vh;
-    const progress = room > 0 && !reduceMotion.matches
+    const progress = room > 0
       ? Math.min(1, Math.max(0, window.scrollY / room))
       : 0;
     const y = start + (end - start) * progress;
-    rig.style.height = vh * 3 + "px";
-    rig.style.transform = "translate3d(0," + (y - vh * 1.5) + "px,0)";
+    const nextHeight = vh * 3 + "px";
+    const nextTransform = "translate3d(0," + (y - vh * 1.5) + "px,0)";
+
+    if (rig.style.height !== nextHeight) rig.style.height = nextHeight;
+    if (rig.style.transform !== nextTransform) rig.style.transform = nextTransform;
   }
 
   function queue() {
-    if (!queued) {
-      queued = true;
-      requestAnimationFrame(place);
-    }
+    if (!rig || !root.classList.contains("night") || queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      place();
+    });
   }
 
   function setLight(on) {
-    root.classList.toggle("night", !on);
-    toggle.hidden = on;
+    if (!ready) ensureScene();
+
+    const nextNight = !on;
+    root.classList.toggle("night", nextNight);
+    if (toggle) toggle.hidden = on;
+
     if (bell) {
-      bell.classList.toggle("off", !on);
+      bell.classList.toggle("off", nextNight);
       lamp.setAttribute("aria-pressed", String(on));
       if (intro) intro.classList.toggle("lit", on);
     }
-    try { sessionStorage.setItem("lights", on ? "on" : "off"); } catch (e) {}
-    if (!on) place();
+
+    try {
+      if (sessionStorage.getItem("lights") !== (on ? "on" : "off")) {
+        sessionStorage.setItem("lights", on ? "on" : "off");
+      }
+    } catch (e) {}
+
+    if (nextNight) place();
   }
 
-  window.addEventListener("scroll", queue, { passive: true });
-  window.addEventListener("resize", queue);
-
-  toggle.addEventListener("click", () => setLight(true));
-  document.addEventListener("keydown", e => {
+  document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && root.classList.contains("night")) setLight(true);
   });
 
   if (lamp) {
     lamp.addEventListener("click", () => setLight(root.classList.contains("night")));
-    lamp.addEventListener("keydown", e => {
+    lamp.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         lamp.click();
@@ -410,7 +562,20 @@
 
   let startOn = true;
   try { startOn = sessionStorage.getItem("lights") !== "off"; } catch (e) {}
-  setLight(startOn);
+
+  if (startOn) {
+    root.classList.remove("night");
+    if (bell) {
+      bell.classList.remove("off");
+      lamp.setAttribute("aria-pressed", "true");
+      if (intro) intro.classList.add("lit");
+    }
+  } else {
+    setLight(false);
+  }
+
+  window.addEventListener("scroll", queue, { passive: true });
+  window.addEventListener("resize", queue);
 })();
 
 /* Now page: fade timeline entries in as they scroll into view */
