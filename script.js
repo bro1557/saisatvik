@@ -229,6 +229,10 @@
       }
       found.sort((a, b) => a.score - b.score || a.c.name.localeCompare(b.c.name));
       const result = found.slice(0, 6).map((f) => f.c);
+      // Keep typing arbitrary queries from growing this cache without a limit.
+      if (SEARCH_CACHE.size >= 100) {
+        SEARCH_CACHE.delete(SEARCH_CACHE.keys().next().value);
+      }
       SEARCH_CACHE.set(nq, result);
       return result;
     }
