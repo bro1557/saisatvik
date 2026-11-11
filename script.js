@@ -56,6 +56,37 @@
     }, { passive: true });
   }
 
+  const themeToggle = document.querySelector(".theme-toggle");
+  if (themeToggle) {
+    const root = document.documentElement;
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    let isDark = false;
+    try {
+      isDark = localStorage.getItem("color-theme") === "dark";
+    } catch (error) {
+      // Keep the theme usable when storage is unavailable.
+    }
+
+    const setTheme = (dark, save = false) => {
+      isDark = dark;
+      root.dataset.theme = dark ? "dark" : "light";
+      themeToggle.setAttribute("aria-pressed", String(dark));
+      themeToggle.textContent = dark ? "Light" : "Dark";
+      if (themeColor) themeColor.content = dark ? "#101653" : "#2b2bff";
+
+      if (save) {
+        try {
+          localStorage.setItem("color-theme", dark ? "dark" : "light");
+        } catch (error) {
+          // The current page still changes theme when storage is unavailable.
+        }
+      }
+    };
+
+    setTheme(isDark);
+    themeToggle.addEventListener("click", () => setTheme(!isDark, true));
+  }
+
   const input = document.getElementById("car-input");
   if (!input) return;
 

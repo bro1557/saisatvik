@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2b2bff">
+  <meta name="robots" content="noindex">
+  <title>404 · Wrong turn · Satvik Yarlagadda</title>
+  <meta name="description" content="This page isn't on the map. Head back to the home page.">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="btn brand-btn">
+      <a href="index.html">Satvik Yarlagadda</a>
+    </div>
+
+    <nav id="site-nav" class="site-nav" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="now.html">Now</a>
+    </nav>
+
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">Dark</button>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <main class="not-found">
+    <section class="not-found-copy" aria-labelledby="not-found-title">
+      <p class="not-found-kicker"><span></span> Route status <span>·</span> 404</p>
+      <h1 id="not-found-title">Wrong<br>turn.</h1>
+      <p class="not-found-message">This page isn’t on the map. It may have moved, or it may never have been here.</p>
+      <div class="not-found-links">
+        <div class="btn"><a href="index.html">Back to home</a></div>
+        <a class="not-found-secondary" href="index.html#garage">Take a look around <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="not-found-coordinate">You’re not lost. Just one click away.</p>
+    </section>
+
+    <figure class="route-art" aria-label="A car approaching a road closure marked 404">
+      <div class="route-label"><span>END OF THE ROAD</span><span>NO EXIT</span></div>
+      <div class="route-road" aria-hidden="true">
+        <span class="route-edge route-edge-left"></span>
+        <span class="route-edge route-edge-right"></span>
+        <span class="route-centerline"></span>
+        <span class="route-stopline"></span>
+        <span class="route-marker"></span>
+        <img src="images/car-top.webp" alt="">
+      </div>
+      <figcaption><span>DESTINATION</span><strong>NOT FOUND</strong></figcaption>
+    </figure>
+  </main>
+
+  <footer class="not-found-footer">
+    <p>© 2026 Satvik Yarlagadda</p>
+    <a href="index.html">saisatvik.com <span aria-hidden="true">↗</span></a>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
