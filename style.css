@@ -323,6 +323,21 @@ footer {
   font-size: 0.9375rem;
 }
 footer p { margin: 0; }
+.display-help {
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+}
+.display-help summary {
+  width: fit-content;
+  cursor: pointer;
+  text-underline-offset: 0.2em;
+}
+.display-help summary:hover { color: var(--ink); }
+.display-help p {
+  max-width: 38rem;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
 
 @media (max-width: 760px) {
   .top {
@@ -1566,6 +1581,10 @@ html.night .night-rig {
 .not-found-footer p { margin: 0; }
 .not-found-footer a { color: var(--muted); text-decoration: none; }
 .not-found-footer a:hover { color: var(--ink); }
+.not-found-footer .display-help {
+  flex-basis: 100%;
+  margin-top: 0;
+}
 
 @media (max-width: 640px) {
   .not-found {
