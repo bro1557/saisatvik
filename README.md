@@ -9,6 +9,7 @@ It's live at https://saisatvik.com.
 
 - **Home.** A quote, a hanging lamp, and a trick. Switch the lamp off and the page goes dark for Night Drive: a small Model Y drives down the left edge as you scroll, and its headlights light up whatever's ahead. It's the showiest thing on the site.
 - **Lookup Gadget.** Type a car, get a rough price new and a rough price now. It covers most US enthusiast cars, but not niche euros, because I'm only human. Treat the numbers as a ballpark.
+- **Compare.** Pick two cars from the Lookup Gadget data and compare their estimated new prices and typical used ranges side by side.
 - **Garage.** One I have (the Model Y) and two I want (a Ford F-150 Raptor and a Koenigsegg Regera).
 - **Games.** Gavel and Grease, Mahishmati Defense and Hit 21. They're hosted on Netlify, not in this repo, so the site only links out to them.
 - **About.** A timeline of how I got obsessed with cars and tech, from a red car in 2013 to talking my dad into a Tesla in 2021 to building websites now.
@@ -20,8 +21,9 @@ It's live at https://saisatvik.com.
 index.html      home page
 about.html      about page
 now.html        now page
+compare.html    side-by-side car price comparison
 style.css       styles for every page
-script.js       the lamp, Night Drive, and Lookup Gadget
+script.js       the lamp, Night Drive, Lookup Gadget, comparison, and keyboard shortcuts
 images/         every image on the site
 favicon.svg     favicon and link preview files
 robots.txt      rules for search engines

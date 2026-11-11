@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2b2bff">
+  <title>Compare cars · Satvik Yarlagadda</title>
+  <meta name="description" content="Compare estimated new and used prices for cars in the Lookup Gadget.">
+  <link rel="canonical" href="https://saisatvik.com/compare">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="btn brand-btn">
+      <a href="index.html">Satvik Yarlagadda</a>
+    </div>
+
+    <nav id="site-nav" class="site-nav" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="now.html">Now</a>
+      <a href="compare.html" aria-current="page">Compare</a>
+    </nav>
+
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">Dark</button>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <main class="page compare-page" id="car-compare">
+    <p class="compare-eyebrow">Lookup Gadget / Side by side</p>
+    <h1>Compare<br>Two Cars.</h1>
+    <p class="compare-lead">Compare rough new prices and typical used ranges. No listings, just a quick way to see how they stack up.</p>
+
+    <div class="compare-controls">
+      <label>
+        <span>Car one</span>
+        <div class="compare-picker">
+          <input id="compare-car-a" data-shortcut-search type="search" role="combobox" aria-label="Search for the first car" aria-expanded="false" aria-controls="compare-list-a" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search makes and models">
+          <ul id="compare-list-a" class="suggest" role="listbox" hidden></ul>
+        </div>
+      </label>
+      <span class="compare-versus" aria-hidden="true">VS</span>
+      <label>
+        <span>Car two</span>
+        <div class="compare-picker">
+          <input id="compare-car-b" type="search" role="combobox" aria-label="Search for the second car" aria-expanded="false" aria-controls="compare-list-b" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search makes and models">
+          <ul id="compare-list-b" class="suggest" role="listbox" hidden></ul>
+        </div>
+      </label>
+    </div>
+
+    <p class="compare-note" id="compare-note">Prices are rough US estimates. Used range means a typical car a few years old.</p>
+    <div class="compare-results" id="compare-results" aria-live="polite" aria-busy="true"></div>
+    <p class="compare-error" id="compare-error" role="status" hidden></p>
+    <p class="compare-footnote">Bars use the same scale for both cars. Used-price bars show the midpoint of the displayed range.</p>
+    <p class="compare-back"><a href="index.html#price-check">Back to the Lookup Gadget</a></p>
+  </main>
+
+  <footer>
+    <p>© 2026 Satvik Yarlagadda</p>
+    <p><a href="https://creativecommons.org/licenses/by-nd/4.0/">CC BY-ND 4.0 (Copyright Info)</a>.</p>
+    <details class="display-help">
+      <summary>Colors look off?</summary>
+      <p>A browser setting or dark mode extension may be overriding this site. Turn off forced dark mode for saisatvik.com, then use the Dark/Light button in the header to choose the site's theme.</p>
+    </details>
+    <button class="shortcut-help" type="button" aria-haspopup="dialog" aria-controls="shortcut-dialog">Keyboard shortcuts <kbd>?</kbd></button>
+    <dialog class="shortcut-dialog" id="shortcut-dialog" aria-labelledby="shortcut-title">
+      <div class="shortcut-dialog-head">
+        <h2 id="shortcut-title">Keyboard shortcuts</h2>
+        <form method="dialog"><button class="shortcut-close" aria-label="Close shortcuts">×</button></form>
+      </div>
+      <dl>
+        <div><dt><kbd>/</kbd></dt><dd>Focus the first car picker</dd></div>
+        <div><dt><kbd>?</kbd></dt><dd>Show or hide this guide</dd></div>
+        <div><dt><kbd>Esc</kbd></dt><dd>Close this guide</dd></div>
+      </dl>
+    </dialog>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

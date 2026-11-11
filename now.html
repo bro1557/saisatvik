@@ -30,6 +30,7 @@
       <a href="index.html#garage">Garage</a>
       <a href="index.html#contact">Contact</a>
       <a href="index.html#games">Games</a>
+      <a href="compare.html">Compare</a>
     </nav>
 
     <button class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">Dark</button>
@@ -99,6 +100,18 @@
       <summary>Colors look off?</summary>
       <p>A browser setting or dark mode extension may be overriding this site. Turn off forced dark mode for saisatvik.com, then use the Dark/Light button in the header to choose the site's theme.</p>
     </details>
+    <button class="shortcut-help" type="button" aria-haspopup="dialog" aria-controls="shortcut-dialog">Keyboard shortcuts <kbd>?</kbd></button>
+    <dialog class="shortcut-dialog" id="shortcut-dialog" aria-labelledby="shortcut-title">
+      <div class="shortcut-dialog-head">
+        <h2 id="shortcut-title">Keyboard shortcuts</h2>
+        <form method="dialog"><button class="shortcut-close" aria-label="Close shortcuts">×</button></form>
+      </div>
+      <dl>
+        <div><dt><kbd>/</kbd></dt><dd>Open car lookup on Home</dd></div>
+        <div><dt><kbd>?</kbd></dt><dd>Show or hide this guide</dd></div>
+        <div><dt><kbd>Esc</kbd></dt><dd>Close this guide</dd></div>
+      </dl>
+    </dialog>
   </footer>
 
   <script src="script.js" defer></script>

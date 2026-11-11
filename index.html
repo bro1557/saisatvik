@@ -50,6 +50,7 @@
       <a href="#garage">Garage</a>
       <a href="#contact">Contact</a>
       <a href="#games">Games</a>
+      <a href="compare.html">Compare</a>
     </nav>
 
     <button class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">Dark</button>
@@ -110,10 +111,11 @@
     <section id="price-check" class="tool">
       <div class="btn"><a>Lookup Gadget!</a></div>
       <p class="tool-lead">Most US enthusiast cars are on here, so no niche euros. I'm only human.</p>
+      <p class="compare-cta"><a href="compare.html">Compare two cars <span aria-hidden="true">→</span></a></p>
 
       <div class="finder">
         <label class="sr-only" for="car-input">Search for a car</label>
-        <input id="car-input" type="text" role="combobox" aria-expanded="false" aria-controls="car-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Try Mustang, Raptor, 911...">
+        <input id="car-input" data-shortcut-search type="text" role="combobox" aria-expanded="false" aria-controls="car-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Try Mustang, Raptor, 911...">
         <ul id="car-list" class="suggest" role="listbox" hidden></ul>
       </div>
 
@@ -232,6 +234,18 @@
       <summary>Colors look off?</summary>
       <p>A browser setting or dark mode extension may be overriding this site. Turn off forced dark mode for saisatvik.com, then use the Dark/Light button in the header to choose the site's theme.</p>
     </details>
+    <button class="shortcut-help" type="button" aria-haspopup="dialog" aria-controls="shortcut-dialog">Keyboard shortcuts <kbd>?</kbd></button>
+    <dialog class="shortcut-dialog" id="shortcut-dialog" aria-labelledby="shortcut-title">
+      <div class="shortcut-dialog-head">
+        <h2 id="shortcut-title">Keyboard shortcuts</h2>
+        <form method="dialog"><button class="shortcut-close" aria-label="Close shortcuts">×</button></form>
+      </div>
+      <dl>
+        <div><dt><kbd>/</kbd></dt><dd>Focus car search</dd></div>
+        <div><dt><kbd>?</kbd></dt><dd>Show or hide this guide</dd></div>
+        <div><dt><kbd>Esc</kbd></dt><dd>Close this guide</dd></div>
+      </dl>
+    </dialog>
   </footer>
 
   <script src="script.js" defer></script>

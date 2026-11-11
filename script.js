@@ -87,11 +87,43 @@
     themeToggle.addEventListener("click", () => setTheme(!isDark, true));
   }
 
-  const input = document.getElementById("car-input");
-  if (!input) return;
+  const shortcutDialog = document.getElementById("shortcut-dialog");
+  const shortcutButton = document.querySelector(".shortcut-help");
+  if (shortcutDialog && shortcutButton) {
+    shortcutButton.addEventListener("click", () => shortcutDialog.showModal());
+    shortcutDialog.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      shortcutDialog.close();
+    });
 
-  const list = document.getElementById("car-list");
-  const out = document.getElementById("car-result");
+    document.addEventListener("keydown", (event) => {
+      if (event.altKey || event.ctrlKey || event.metaKey || event.isComposing) return;
+
+      const target = event.target;
+      const isEditing = target instanceof HTMLElement &&
+        (target.isContentEditable || target.matches("input, textarea, select"));
+
+      if (event.key === "?" && !isEditing) {
+        event.preventDefault();
+        if (shortcutDialog.open) shortcutDialog.close();
+        else shortcutDialog.showModal();
+      } else if (event.key === "/" && !isEditing && !shortcutDialog.open) {
+        const search = document.querySelector("[data-shortcut-search]");
+        event.preventDefault();
+        if (search) search.focus();
+        else window.location.href = "index.html#car-input";
+      }
+    });
+  }
+
+  const input = document.getElementById("car-input");
+  const compareRoot = document.getElementById("car-compare");
+  if (!input && !compareRoot) return;
+
+  const list = input ? document.getElementById("car-list") : null;
+  const out = input ? document.getElementById("car-result") : null;
   const MODEL_Y = "Tesla Model Y";
   const MODEL_Y_NEW = 41000;
   const DATA_URL = "cars-data.json";
@@ -437,7 +469,224 @@
     show(CARS[0]);
   }
 
-  initCarSearch();
+  async function initCarCompare() {
+    const first = document.getElementById("compare-car-a");
+    const second = document.getElementById("compare-car-b");
+    const results = document.getElementById("compare-results");
+    const error = document.getElementById("compare-error");
+    const firstList = document.getElementById("compare-list-a");
+    const secondList = document.getElementById("compare-list-b");
+    if (!first || !second || !results || !error || !firstList || !secondList) return;
+
+    results.setAttribute("aria-busy", "true");
+    try {
+      const cars = buildCars(await loadCars());
+      if (!cars.length) throw new Error("No car data is available.");
+
+      const carsByName = new Map(cars.map((car) => [car.name, car]));
+      const selectedCars = [
+        carsByName.has("Tesla Model Y") ? carsByName.get("Tesla Model Y") : cars[0],
+        carsByName.get("Ford F-150 Raptor") ||
+          cars.find((car) => car.name !== (carsByName.get("Tesla Model Y") || cars[0]).name) ||
+          cars[0]
+      ];
+      const pickers = [
+        { input: first, list: firstList, side: 0, active: -1, matches: [] },
+        { input: second, list: secondList, side: 1, active: -1, matches: [] }
+      ];
+
+      pickers.forEach((picker) => {
+        picker.input.value = selectedCars[picker.side].name;
+        picker.input.addEventListener("focus", () => {
+          picker.input.select();
+          renderPicker(picker);
+        });
+        picker.input.addEventListener("input", () => {
+          picker.active = -1;
+          renderPicker(picker);
+        });
+        picker.input.addEventListener("keydown", (event) => {
+          if (event.key === "ArrowDown" && picker.matches.length) {
+            event.preventDefault();
+            picker.active = (picker.active + 1) % picker.matches.length;
+            renderPicker(picker);
+          } else if (event.key === "ArrowUp" && picker.matches.length) {
+            event.preventDefault();
+            picker.active = picker.active <= 0 ? picker.matches.length - 1 : picker.active - 1;
+            renderPicker(picker);
+          } else if (event.key === "Enter" && picker.matches.length) {
+            event.preventDefault();
+            chooseCar(picker, picker.matches[picker.active >= 0 ? picker.active : 0]);
+          } else if (event.key === "Escape") {
+            closePicker(picker);
+          }
+        });
+        picker.input.addEventListener("blur", () => closePicker(picker));
+      });
+
+      const money = (amount) => amount >= 1000000
+        ? "$" + (amount / 1000000).toFixed(1).replace(/\.0$/, "") + "M"
+        : "$" + amount.toLocaleString("en-US");
+
+      function makeCard(car, side, scale) {
+        const card = document.createElement("article");
+        card.className = "compare-card";
+
+        const label = document.createElement("p");
+        label.className = "compare-card-label";
+        label.textContent = "CAR " + side;
+
+        const name = document.createElement("h2");
+        name.textContent = car.name;
+
+        const stats = document.createElement("dl");
+        stats.className = "compare-stats";
+        [
+          ["New", money(car.price)],
+          ["Used range", money(car.lo) + " – " + money(car.hi)]
+        ].forEach(([term, value]) => {
+          const row = document.createElement("div");
+          const dt = document.createElement("dt");
+          const dd = document.createElement("dd");
+          dt.textContent = term;
+          dd.textContent = value;
+          row.append(dt, dd);
+          stats.append(row);
+        });
+
+        const bars = document.createElement("div");
+        bars.className = "compare-bars";
+        [
+          ["New", car.price],
+          ["Used midpoint", (car.lo + car.hi) / 2]
+        ].forEach(([labelText, value]) => {
+          const row = document.createElement("div");
+          row.className = "compare-bar-row";
+          const labelTextNode = document.createElement("span");
+          const track = document.createElement("span");
+          const fill = document.createElement("span");
+          const valueText = document.createElement("strong");
+          labelTextNode.textContent = labelText;
+          track.className = "compare-track";
+          fill.className = "compare-fill";
+          fill.style.width = Math.max(2, value / scale * 100) + "%";
+          track.append(fill);
+          valueText.textContent = money(value);
+          row.append(labelTextNode, track, valueText);
+          bars.append(row);
+        });
+
+        card.append(label, name, stats, bars);
+        if (car.note) {
+          const note = document.createElement("p");
+          note.className = "compare-car-note";
+          note.textContent = car.note;
+          card.append(note);
+        }
+        return card;
+      }
+
+      function closePicker(picker) {
+        picker.matches = [];
+        picker.active = -1;
+        picker.list.replaceChildren();
+        picker.list.hidden = true;
+        picker.input.setAttribute("aria-expanded", "false");
+        picker.input.removeAttribute("aria-activedescendant");
+      }
+
+      function renderPicker(picker) {
+        const query = norm(picker.input.value);
+        const otherCar = selectedCars[1 - picker.side];
+        picker.matches = cars
+          .filter((car) => car.name !== otherCar.name &&
+            (!query || norm(car.name + " " + car.words.join(" ")).includes(query)))
+          .sort((a, b) => {
+            if (!query) return a.name.localeCompare(b.name);
+            const aName = norm(a.name);
+            const bName = norm(b.name);
+            return Number(!aName.startsWith(query)) - Number(!bName.startsWith(query)) ||
+              a.name.localeCompare(b.name);
+          })
+          .slice(0, 8);
+
+        const fragment = document.createDocumentFragment();
+        picker.matches.forEach((car, index) => {
+          const option = document.createElement("li");
+          option.id = picker.list.id + "-option-" + index;
+          option.setAttribute("role", "option");
+          option.setAttribute("aria-selected", String(index === picker.active));
+          option.textContent = car.name;
+          option.addEventListener("mousedown", (event) => {
+            event.preventDefault();
+            chooseCar(picker, car);
+          });
+          fragment.append(option);
+        });
+
+        if (!picker.matches.length) {
+          const empty = document.createElement("li");
+          empty.className = "suggest-empty";
+          empty.setAttribute("role", "option");
+          empty.setAttribute("aria-disabled", "true");
+          empty.textContent = "No matching cars";
+          fragment.append(empty);
+        }
+
+        picker.list.replaceChildren(fragment);
+        picker.list.hidden = false;
+        picker.input.setAttribute("aria-expanded", "true");
+        if (picker.active >= 0 && picker.matches[picker.active]) {
+          picker.input.setAttribute("aria-activedescendant", picker.list.id + "-option-" + picker.active);
+          picker.list.children[picker.active].scrollIntoView({ block: "nearest" });
+        } else {
+          picker.input.removeAttribute("aria-activedescendant");
+        }
+      }
+
+      function chooseCar(picker, car) {
+        selectedCars[picker.side] = car;
+        picker.input.value = car.name;
+        closePicker(picker);
+        render();
+        const otherPicker = pickers[1 - picker.side];
+        if (otherPicker.input.getAttribute("aria-expanded") === "true") renderPicker(otherPicker);
+      }
+
+      function render() {
+        const [left, right] = selectedCars;
+        if (!left || !right) return;
+
+        const scale = Math.max(left.price, right.price, left.hi, right.hi);
+        const usedLeft = (left.lo + left.hi) / 2;
+        const usedRight = (right.lo + right.hi) / 2;
+        const describeGap = (label, leftName, leftValue, rightName, rightValue) => {
+          if (leftValue === rightValue) return label + ": both are about " + money(leftValue) + ".";
+          return label + ": " + (leftValue < rightValue ? leftName : rightName) +
+            " is lower by " + money(Math.abs(leftValue - rightValue)) + ".";
+        };
+        const insight = document.createElement("p");
+        insight.className = "compare-insight";
+        insight.textContent = [
+          describeGap("New price", left.name, left.price, right.name, right.price),
+          describeGap("Used midpoint", left.name, usedLeft, right.name, usedRight)
+        ].join(" ");
+
+        results.replaceChildren(makeCard(left, "01", scale), makeCard(right, "02", scale), insight);
+        error.hidden = true;
+      }
+
+      render();
+    } catch (loadError) {
+      error.textContent = "Car prices couldn’t be loaded. Please try again in a moment.";
+      error.hidden = false;
+    } finally {
+      results.setAttribute("aria-busy", "false");
+    }
+  }
+
+  if (input) initCarSearch();
+  if (compareRoot) initCarCompare();
 })();
 /* Lights and Night Drive.
    Lamp on: the normal site. Lamp off: the page goes dark and a car drives
